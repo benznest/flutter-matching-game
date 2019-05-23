@@ -4,7 +4,7 @@ import 'package:flutter_match_animal_game/block.dart';
 import 'package:flutter_match_animal_game/coordinate.dart';
 import 'package:flutter_match_animal_game/game_config.dart';
 import 'package:flutter_match_animal_game/game_table.dart';
-import 'package:flutter_match_animal_game/line_match_builder.dart';
+import 'package:flutter_match_animal_game/lines_match_builder.dart';
 import 'package:flutter_match_animal_game/lines_match_painter.dart';
 
 class GamePage extends StatefulWidget {

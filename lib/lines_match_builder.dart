@@ -4,20 +4,6 @@ import 'package:flutter_match_animal_game/game_config.dart';
 import 'package:flutter_match_animal_game/game_table.dart';
 import 'package:flutter_match_animal_game/lines_match_painter.dart';
 
-//
-//
-//               --------------------------
-//               |                        |
-//               |                        |  <== BASE_HEIGHT_LINE
-//               |                        |
-//
-//                                           <== BASE_MARGIN_LINE_BLOCK
-//
-//               []                      []  <== BLOCK
-//
-//
-//
-//
 class LineMatchBuilder {
   double marginLineFromBlock = 5;
   GameTable gameTable;

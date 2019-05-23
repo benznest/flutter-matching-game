@@ -4,6 +4,7 @@ import 'package:flutter_match_animal_game/block.dart';
 import 'package:flutter_match_animal_game/block_manager.dart';
 import 'package:flutter_match_animal_game/coordinate.dart';
 import 'package:flutter_match_animal_game/game_config.dart';
+import 'package:flutter_match_animal_game/game_table_calculation.dart';
 
 enum BorderSide { NONE, LEFT, TOP, RIGHT, BOTTOM }
 
@@ -17,19 +18,19 @@ class LineMatchResult {
   LineMatchResult({this.a, this.b, this.c, this.d, this.available = false});
 }
 
+
 class GameTable {
   int countRow;
   int countCol;
   double blockSize;
   double blockMargin;
   List<List<Block>> tableData;
-  List<List<bool>> tableTempCalculation;
+  GameTableCalculation gameTableCalculation;
 
-  GameTable(
-      {this.countRow = GameConfig.COUNT_ROW_DEFAULT,
-      this.countCol = GameConfig.COUNT_COL_DEFAULT,
-      this.blockSize = GameConfig.BLOCK_SIZE_DEFAULT,
-      this.blockMargin = GameConfig.BLOCK_MARGIN_DEFAULT});
+  GameTable({this.countRow = GameConfig.COUNT_ROW_DEFAULT,
+    this.countCol = GameConfig.COUNT_COL_DEFAULT,
+    this.blockSize = GameConfig.BLOCK_SIZE_DEFAULT,
+    this.blockMargin = GameConfig.BLOCK_MARGIN_DEFAULT});
 
   void init() {
     initTable();
@@ -56,16 +57,6 @@ class GameTable {
     }
   }
 
-  void prepareCalculation() {
-    tableTempCalculation = List();
-    for (int row = 0; row < countRow; row++) {
-      List<bool> list = List();
-      for (int col = 0; col < countCol; col++) {
-        list.add(false);
-      }
-      tableTempCalculation.add(list);
-    }
-  }
 
   bool isOuterBlock(Coordinate coor) {
     return coor.row == 0 ||
@@ -79,6 +70,10 @@ class GameTable {
         coor.row == countRow - 2 ||
         coor.col == 1 ||
         coor.col == countCol - 2;
+  }
+
+  bool isBlockEmpty(Coordinate coor) {
+    return getTableValue(Coordinate(row: coor.row, col: coor.col)) == 0;
   }
 
   BorderSide getBorderSideBlock(Coordinate source, Coordinate target) {
@@ -123,8 +118,6 @@ class GameTable {
   LineMatchResult checkBlockMatch(Coordinate source, Coordinate target) {
     LineMatchResult result = LineMatchResult();
     if (isValueMatch(source, target)) {
-      prepareCalculation();
-
       if (isAttach(source, target)) {
         result.a = source;
         result.b = target;
@@ -139,56 +132,28 @@ class GameTable {
         if (borderSide == BorderSide.TOP) {
           result.b = Coordinate.of(source, addRow: -1);
           result.c = Coordinate.of(target, addRow: -1);
+        } else if (borderSide == BorderSide.LEFT) {
+          result.b = Coordinate.of(source, addCol: -1);
+          result.c = Coordinate.of(target, addCol: -1);
+        } else if (borderSide == BorderSide.BOTTOM) {
+          result.b = Coordinate.of(source, addRow: 1);
+          result.c = Coordinate.of(target, addRow: 1);
+        } else if (borderSide == BorderSide.RIGHT) {
+          result.b = Coordinate.of(source, addCol: 1);
+          result.c = Coordinate.of(target, addCol: 1);
         }
         result.d = Coordinate.of(target);
         result.available = true;
         return result;
+      } else {
+        // For case L and U
+        gameTableCalculation = GameTableCalculation(this);
+        gameTableCalculation.prepareCalculation();
+        return gameTableCalculation.calculatePathL(source, target);
       }
     } else {
       print("value block is not match.");
     }
     return result;
-  }
-
-  calculate(Coordinate source, Coordinate target) {
-    calculatePath(source);
-    calculatePath(target, isTarget: true);
-  }
-
-  void calculatePath(Coordinate coor, {bool isTarget = false}) {
-    for (int row = coor.row; row >= 0; row--) {
-      if (getTableValue(Coordinate(row: row, col: coor.col)) == 0) {
-        if (tableTempCalculation[row][coor.col]) {
-        } else {
-          tableTempCalculation[row][coor.col] = true;
-        }
-      } else {
-        break;
-      }
-    }
-
-    for (int row = coor.row; row < countRow; row++) {
-      if (getTableValue(Coordinate(row: row, col: coor.col)) == 0) {
-        tableTempCalculation[row][coor.col] = true;
-      } else {
-        break;
-      }
-    }
-
-    for (int col = coor.col; col >= 0; col--) {
-      if (getTableValue(Coordinate(row: col, col: coor.col)) == 0) {
-        tableTempCalculation[coor.row][col] = true;
-      } else {
-        break;
-      }
-    }
-
-    for (int col = coor.col; col < countCol; col++) {
-      if (getTableValue(Coordinate(row: col, col: coor.col)) == 0) {
-        tableTempCalculation[coor.row][col] = true;
-      } else {
-        break;
-      }
-    }
   }
 }
