@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_match_animal_game/block.dart';
-import 'package:flutter_match_animal_game/coordinate.dart';
+import 'package:flutter_match_animal_game/models/block.dart';
+import 'package:flutter_match_animal_game/models/coordinate.dart';
 import 'package:flutter_match_animal_game/game_config.dart';
-import 'package:flutter_match_animal_game/game_table.dart';
-import 'package:flutter_match_animal_game/lines_match_builder.dart';
-import 'package:flutter_match_animal_game/lines_match_painter.dart';
+import 'package:flutter_match_animal_game/features/game/game_table.dart';
+import 'package:flutter_match_animal_game/features/lines_match/lines_match_builder.dart';
+import 'package:flutter_match_animal_game/features/lines_match/lines_match_painter.dart';
 
-class GamePage extends StatefulWidget {
-  GamePage({Key key, this.title}) : super(key: key);
-  final String title;
+class GamePlayScreen extends StatefulWidget {
+  GamePlayScreen({Key key}) : super(key: key);
 
   @override
-  _GamePageState createState() => _GamePageState();
+  _GamePlayScreenState createState() => _GamePlayScreenState();
 }
 
-class _GamePageState extends State<GamePage> {
+class _GamePlayScreenState extends State<GamePlayScreen> {
   GameTable gameTable;
   Coordinate coordinateSelected;
   LinesMatchPainter linesMatchPainter;
@@ -116,6 +115,14 @@ class _GamePageState extends State<GamePage> {
   }
 
   Container buildBlock(Block block, {bool isSelected = false}) {
+    if (block.isColorBlock()) {
+      return buildBlockColor(block, isSelected: isSelected);
+    } else {
+      return buildBlockImage(block, isSelected: isSelected);
+    }
+  }
+
+  Container buildBlockColor(Block block, {bool isSelected = false}) {
     if (block.value != 0 && isSelected) {
       return Container(
         margin: EdgeInsets.all(2),
@@ -139,6 +146,43 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  Container buildBlockImage(Block block, {bool isSelected = false}) {
+    if (block.value != 0 && isSelected) {
+      return Container(
+        margin: EdgeInsets.all(2),
+        width: gameTable.blockSize,
+        height: gameTable.blockSize,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            border: Border.all(color: Colors.blue[600], width: 4),
+            color: Colors.grey[200]
+        ),
+        child: Image.asset(block.asset,
+            width: gameTable.blockSize,
+            height: gameTable.blockSize),
+      );
+    } else {
+      if (block.value == 0) {
+        return Container(
+            margin: EdgeInsets.all(2),
+            width: gameTable.blockSize,
+            height: gameTable.blockSize);
+      } else {
+        return Container(
+            margin: EdgeInsets.all(2),
+            width: gameTable.blockSize,
+            height: gameTable.blockSize,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                color: Colors.blue[200]
+            ),
+            child: Image.asset(block.asset,
+                width: gameTable.blockSize,
+                height: gameTable.blockSize));
+      }
+    }
+  }
+
   clear() {
     setState(() {
       coordinateSelected = null;
@@ -157,7 +201,7 @@ class _GamePageState extends State<GamePage> {
         isSelectedMode() &&
         !coordinateSelected.equals(coor)) {
       LineMatchResult result =
-          gameTable.checkBlockMatch(coordinateSelected, coor);
+      gameTable.checkBlockMatch(coordinateSelected, coor);
       if (result.available) {
         linesMatchPainter = LineMatchBuilder(gameTable: gameTable).build(
           a: result.a,

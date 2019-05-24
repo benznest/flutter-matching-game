@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter_match_animal_game/block.dart';
-import 'package:flutter_match_animal_game/block_manager.dart';
-import 'package:flutter_match_animal_game/coordinate.dart';
+import 'package:flutter_match_animal_game/models/block.dart';
+import 'package:flutter_match_animal_game/models/coordinate.dart';
 import 'package:flutter_match_animal_game/game_config.dart';
-import 'package:flutter_match_animal_game/game_table_calculation.dart';
+import 'package:flutter_match_animal_game/features/game/game_table_calculation.dart';
+import 'package:flutter_match_animal_game/features/block/block_manager.dart';
 
 enum BorderSide { NONE, LEFT, TOP, RIGHT, BOTTOM }
 

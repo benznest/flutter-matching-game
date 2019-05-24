@@ -6,4 +6,5 @@ class GameConfig{
   static const double MARGIN_LINE_FROM_BLOCK = 5;
   static const double BASE_HEIGHT_LINE = 15;
   static const int COUNT_RENOVATE_DEFAULT = 2;
+  static const String BASE_ASSET_PATH = "assets/images/";
 }

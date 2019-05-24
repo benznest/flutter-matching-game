@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_match_animal_game/game_menu_page.dart';
-import 'package:flutter_match_animal_game/game_page.dart';
+import 'package:flutter_match_animal_game/ui/screens/game_menu_screen.dart';
+import 'package:flutter_match_animal_game/ui/screens/game_play_screen.dart';
 import 'package:flutter_match_animal_game/my_application.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GameMenuPage(title: 'Onet Game'.toUpperCase()),
+      home: GameMenuScreen(title: 'Onet Game'.toUpperCase()),
     );
   }
 }

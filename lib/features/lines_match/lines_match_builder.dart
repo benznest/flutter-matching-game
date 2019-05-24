@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_match_animal_game/coordinate.dart';
+import 'package:flutter_match_animal_game/models/coordinate.dart';
 import 'package:flutter_match_animal_game/game_config.dart';
-import 'package:flutter_match_animal_game/game_table.dart';
-import 'package:flutter_match_animal_game/lines_match_painter.dart';
+import 'package:flutter_match_animal_game/features/game/game_table.dart';
+import 'package:flutter_match_animal_game/features/lines_match/lines_match_painter.dart';
 
 class LineMatchBuilder {
   double marginLineFromBlock = 5;

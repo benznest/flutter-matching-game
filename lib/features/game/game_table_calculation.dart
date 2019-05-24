@@ -1,5 +1,5 @@
-import 'package:flutter_match_animal_game/coordinate.dart';
-import 'package:flutter_match_animal_game/game_table.dart';
+import 'package:flutter_match_animal_game/models/coordinate.dart';
+import 'package:flutter_match_animal_game/features/game/game_table.dart';
 
 enum MarkPathStatus { DONE, VISIT_INTERSECTION, FAIL }
 enum CoordinateType { NORMAL, SOURCE, TARGET }
@@ -107,6 +107,7 @@ class GameTableCalculation {
       result.b = Coordinate.of(source, addCol: 1);
       result.c = Coordinate.of(target, addCol: 1);
     }
+
     result.d = Coordinate.of(target);
     result.available = true;
     return result;
