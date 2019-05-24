@@ -18,25 +18,29 @@ class LineMatchResult {
   LineMatchResult({this.a, this.b, this.c, this.d, this.available = false});
 }
 
-
 class GameTable {
   int countRow;
   int countCol;
   double blockSize;
   double blockMargin;
+  int countRenovate;
   List<List<Block>> tableData;
   GameTableCalculation gameTableCalculation;
+  int countBlock;
 
-  GameTable({this.countRow = GameConfig.COUNT_ROW_DEFAULT,
-    this.countCol = GameConfig.COUNT_COL_DEFAULT,
-    this.blockSize = GameConfig.BLOCK_SIZE_DEFAULT,
-    this.blockMargin = GameConfig.BLOCK_MARGIN_DEFAULT});
+  GameTable(
+      {this.countRow = GameConfig.COUNT_ROW_DEFAULT,
+      this.countCol = GameConfig.COUNT_COL_DEFAULT,
+      this.blockSize = GameConfig.BLOCK_SIZE_DEFAULT,
+      this.blockMargin = GameConfig.BLOCK_MARGIN_DEFAULT,
+      this.countRenovate = GameConfig.COUNT_RENOVATE_DEFAULT});
 
   void init() {
     initTable();
   }
 
-  void initTable() {
+  void initTable({bool isRandom = true, int value = 1}) {
+    countBlock = (countRow - 1) * (countCol - 1);
     tableData = List();
     for (int row = 0; row < countRow; row++) {
       List<Block> listBlock = List();
@@ -44,7 +48,11 @@ class GameTable {
         if (isOuterBlock(Coordinate(row: row, col: col))) {
           listBlock.add(BlockManager.getEmptyBlock());
         } else {
-          listBlock.add(BlockManager.randomBlock());
+          if (isRandom) {
+            listBlock.add(BlockManager.randomBlock());
+          } else {
+            listBlock.add(BlockManager.getBlock(value));
+          }
         }
       }
       tableData.add(listBlock);
@@ -56,7 +64,6 @@ class GameTable {
       tableData[coor.row][coor.col] = BlockManager.getEmptyBlock();
     }
   }
-
 
   bool isOuterBlock(Coordinate coor) {
     return coor.row == 0 ||
@@ -89,7 +96,7 @@ class GameTable {
     return BorderSide.NONE;
   }
 
-  bool isAttach(Coordinate source, Coordinate target) {
+  bool isPathAttachBlock(Coordinate source, Coordinate target) {
     if (source.row == target.row) {
       if (source.col + 1 == target.col || source.col - 1 == target.col) {
         return true;
@@ -116,44 +123,52 @@ class GameTable {
   }
 
   LineMatchResult checkBlockMatch(Coordinate source, Coordinate target) {
-    LineMatchResult result = LineMatchResult();
     if (isValueMatch(source, target)) {
-      if (isAttach(source, target)) {
-        result.a = source;
-        result.b = target;
-        result.available = true;
-        return result;
-      } else if (isBorderBlock(source) &&
-          isBorderBlock(target) &&
-          isBlockInSameAxis(source, target)) {
-        // border case
-        BorderSide borderSide = getBorderSideBlock(source, target);
-        result.a = Coordinate.of(source);
-        if (borderSide == BorderSide.TOP) {
-          result.b = Coordinate.of(source, addRow: -1);
-          result.c = Coordinate.of(target, addRow: -1);
-        } else if (borderSide == BorderSide.LEFT) {
-          result.b = Coordinate.of(source, addCol: -1);
-          result.c = Coordinate.of(target, addCol: -1);
-        } else if (borderSide == BorderSide.BOTTOM) {
-          result.b = Coordinate.of(source, addRow: 1);
-          result.c = Coordinate.of(target, addRow: 1);
-        } else if (borderSide == BorderSide.RIGHT) {
-          result.b = Coordinate.of(source, addCol: 1);
-          result.c = Coordinate.of(target, addCol: 1);
-        }
-        result.d = Coordinate.of(target);
-        result.available = true;
-        return result;
+      gameTableCalculation = GameTableCalculation(this);
+      if (isPathAttachBlock(source, target)) {
+        return gameTableCalculation.makePathAttachCase(source, target);
+      } else if (isPathOnBorder(source, target)) {
+        return gameTableCalculation.makePathBorderCase(source, target);
       } else {
         // For case L and U
-        gameTableCalculation = GameTableCalculation(this);
         gameTableCalculation.prepareCalculation();
-        return gameTableCalculation.calculatePathL(source, target);
+        gameTableCalculation.calculatePossiblePath(source, target);
+
+        if (gameTableCalculation.isPathL()) {
+          return gameTableCalculation.makePathL(source, target);
+        } else {
+          gameTableCalculation.calculatePathU();
+          if (gameTableCalculation.isPathU()) {
+            return gameTableCalculation.makePathU(source, target);
+          }
+        }
       }
     } else {
       print("value block is not match.");
     }
+
+    LineMatchResult result = LineMatchResult();
     return result;
+  }
+
+  bool isPathOnBorder(Coordinate source, Coordinate target) {
+    return isBorderBlock(source) &&
+        isBorderBlock(target) &&
+        isBlockInSameAxis(source, target);
+  }
+
+  void renovate() {
+    for (int row = 1; row < countRow - 1; row++) {
+      for (int col = 1; col < countCol - 1; col++) {
+        Coordinate coor = Coordinate(row: row, col: col);
+        if (!isBlockEmpty(coor)) {
+          tableData[row][col] = BlockManager.randomBlock();
+        }
+      }
+    }
+  }
+
+  bool canRenovate() {
+    return countRenovate > 0;
   }
 }

@@ -56,6 +56,33 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.green[200],
+          title: Text("Onet story".toUpperCase()),
+          centerTitle: true,
+          elevation: 0,
+          actions: <Widget>[
+            Opacity(
+                opacity: gameTable.canRenovate() ? 1 : 0.2,
+                child: FlatButton.icon(
+                    label: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.red[200],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Text("${gameTable.countRenovate}",
+                            style: TextStyle(color: Colors.white))),
+                    icon: Icon(Icons.crop_rotate, color: Colors.white),
+                    onPressed: () => renovateTable())),
+            FlatButton(
+                child: Text(
+                  '${gameTable.countBlock}',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {}),
+          ],
+        ),
         body: GestureDetector(
             child: Container(
                 color: Colors.green[100],
@@ -76,7 +103,7 @@ class _GamePageState extends State<GamePage> {
         Block block = gameTable.tableData[row][col];
         Coordinate coor = Coordinate(row: row, col: col);
         listBlock.add(GestureDetector(
-          child: buildBlock(block, isSelected: coor == coordinateSelected),
+          child: buildBlock(block, isSelected: coor.equals(coordinateSelected)),
           onTap: () {
             selectBlock(block, coor);
           },
@@ -89,7 +116,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   Container buildBlock(Block block, {bool isSelected = false}) {
-    if (block.value != 0 && isSelectedMode() && isSelected) {
+    if (block.value != 0 && isSelected) {
       return Container(
         margin: EdgeInsets.all(2),
         width: gameTable.blockSize,
@@ -119,13 +146,16 @@ class _GamePageState extends State<GamePage> {
   }
 
   setCoordinateSelected(Coordinate coor) {
+    print("setCoordinateSelected");
     setState(() {
       coordinateSelected = coor;
     });
   }
 
   void selectBlock(Block block, Coordinate coor) {
-    if (block.value != 0 && isSelectedMode()) {
+    if (block.value != 0 &&
+        isSelectedMode() &&
+        !coordinateSelected.equals(coor)) {
       LineMatchResult result =
           gameTable.checkBlockMatch(coordinateSelected, coor);
       if (result.available) {
@@ -140,16 +170,21 @@ class _GamePageState extends State<GamePage> {
         gameTable.removeBlock(result.b);
         gameTable.removeBlock(result.c);
         gameTable.removeBlock(result.d);
+        gameTable.countBlock -= 2;
         clear();
 
-        delay(milli:200,then: () {
-          linesMatchPainter = null;
-        });
+        delay(
+            milli: 200,
+            then: () {
+              linesMatchPainter = null;
+            });
       } else {
         clear();
       }
-    } else {
+    } else if (block.value != 0 && !isSelectedMode()) {
       setCoordinateSelected(coor);
+    } else {
+      clear();
     }
   }
 
@@ -161,5 +196,14 @@ class _GamePageState extends State<GamePage> {
         });
       }
     });
+  }
+
+  renovateTable() {
+    if (gameTable.canRenovate()) {
+      setState(() {
+        gameTable.renovate();
+        gameTable.countRenovate--;
+      });
+    }
   }
 }
