@@ -75,8 +75,14 @@ class _GameMenuScreenState extends State<GameMenuScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Row(
+                    padding:  EdgeInsets.all(8.0),
+                    child: Text(BlockManager.getBlockModeName(currentBlockMode).toUpperCase(),
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -85,7 +91,6 @@ class _GameMenuScreenState extends State<GameMenuScreen> {
                         buildBlockModeContainer(BlockMode.PEOPLE),
                       ],
                     ),
-                  )
                 ])))
       ]),
     );

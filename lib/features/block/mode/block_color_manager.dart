@@ -3,6 +3,7 @@ import 'package:flutter_match_animal_game/game_config.dart';
 import 'package:flutter_match_animal_game/models/block.dart';
 
 class BlockColorManager {
+  static String nameMode = "Colors";
   static List<Block> listBlockColor = List();
   static String icon = GameConfig.BASE_ASSET_PATH + "ic_color.png";
 

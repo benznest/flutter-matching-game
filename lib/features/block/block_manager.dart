@@ -34,6 +34,17 @@ class BlockManager {
     }
   }
 
+  static String getBlockModeName(BlockMode mode) {
+    if (mode == BlockMode.COLOR) {
+      return BlockColorManager.nameMode;
+    } else if (mode == BlockMode.ANIMAL) {
+      return BlockAnimalManager.nameMode;
+    } else if (mode == BlockMode.PEOPLE) {
+      return BlockPeopleManager.nameMode;
+    }
+    return "";
+  }
+
   static String getIconBlockMode(BlockMode mode) {
     if (mode == BlockMode.COLOR) {
       return BlockColorManager.icon;
@@ -54,7 +65,7 @@ class BlockManager {
   }
 
   static Block randomBlock() {
-    return BlockManager.getBlock(MyUtils.randomInt());
+    return BlockManager.getBlock(MyUtils.randomInt(min: 1, max: listBlockData.length -1));
   }
 
 
