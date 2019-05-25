@@ -21,28 +21,17 @@ class _GameMenuScreenState extends State<GameMenuScreen> {
   @override
   void initState() {
     currentBlockMode = BlockManager.blockMode;
-
-    // Force landscape
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
     super.initState();
   }
 
   @override
   dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: buildAppBar(),
       body: buildBody("Home"),

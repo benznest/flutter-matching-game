@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_match_animal_game/ui/screens/game_menu_screen.dart';
 import 'package:flutter_match_animal_game/ui/screens/game_play_screen.dart';
 import 'package:flutter_match_animal_game/my_application.dart';
@@ -11,6 +12,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+    ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Onet Game'.toUpperCase(),

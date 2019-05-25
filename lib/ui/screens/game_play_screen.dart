@@ -29,11 +29,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
 
     linesMatchPainter = null;
 
-    // Force landscape
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
     super.initState();
   }
 
@@ -43,17 +38,12 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
 
   @override
   dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green[200],
